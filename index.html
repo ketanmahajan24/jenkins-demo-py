@@ -3,59 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Deployment Demo</title>
+    <title>CI/CD Deployment Demo</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #fafafa;
-            margin: 0;
-            padding: 50px;
+            background: #ffffff;
             text-align: center;
+            margin: 0;
+            padding: 40px;
         }
         h1 {
-            color: #333;
+            color: #222;
         }
         p {
-            color: #555;
+            color: #444;
             font-size: 18px;
         }
         .box {
-            background: white;
-            border: 1px solid #ccc;
-            margin: 25px auto;
-            padding: 25px;
-            width: 70%;
-            max-width: 700px;
+            border: 2px solid #0077cc;
             border-radius: 8px;
-        }
-        .label {
-            font-weight: bold;
-            color: #1a73e8;
+            padding: 20px;
+            margin: 25px auto;
+            width: 70%;
+            max-width: 650px;
+            background: #f2f8ff;
         }
         footer {
             margin-top: 40px;
-            color: #888;
             font-size: 14px;
+            color: #777;
+        }
+        .highlight {
+            color: #0077cc;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <h1>CI/CD Deployment Success!</h1>
-    <p>Your website has been deployed from <span class="label">GitHub</span> using <span class="label">Jenkins</span>.</p>
+    <h1>CI/CD Pipeline Deployment Successful! 🚀</h1>
+
+    <p>
+        This page is automatically deployed using
+        <span class="highlight">GitHub → Jenkins → Remote Server</span>
+    </p>
 
     <div class="box">
-        <p>Every time you <strong>push code</strong> to GitHub,</p>
-        <p>Jenkins will automatically:</p>
-        <p>✔ Pull latest code<br>✔ Copy files to server<br>✔ Restart Apache2</p>
+        <p>✔ Whenever new code is pushed to GitHub</p>
+        <p>✔ Jenkins builds automatically</p>
+        <p>✔ Website gets deployed on remote server</p>
+        <p>✔ Apache2 restarts to apply changes</p>
     </div>
 
     <div class="box">
-        <p><strong>Current Build Status:</strong> Running Successfully 🎉</p>
+        <p><strong>Current Status:</strong> Live & Running 🎉</p>
     </div>
 
     <footer>
-        &copy; 2025 Automated Deployment Demo
+        © 2025 | Automated Deployment by CI/CD
     </footer>
 
 </body>
