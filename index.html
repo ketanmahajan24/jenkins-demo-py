@@ -1,33 +1,259 @@
-<!DOCTYPE html>
+ <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Simple Web Page</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-        h1 {
-            color: #333;
-        }
-        p {
-            color: #555;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Demo: CI/CD Site — GitHub → Jenkins → Remote</title>
+  <meta name="description" content="Demo site showing automatic builds: push to GitHub, Jenkins builds & deploys to remote server." />
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --muted:#9aa6bd; --accent:#5eead4;
+      --glass: rgba(255,255,255,0.03);
+      --radius:14px;
+      --maxw:1100px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; padding:48px 20px; background:
+      radial-gradient(800px 400px at 10% 10%, rgba(94,234,212,0.06), transparent 8%),
+      linear-gradient(180deg,#071024 0%, #071425 60%);
+      color:#e6eef8; -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex; align-items:flex-start; justify-content:center;
+      gap:20px;
+    }
+    .wrap{width:100%; max-width:var(--maxw)}
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.04); padding:28px; border-radius:var(--radius);
+      box-shadow: 0 6px 24px rgba(2,6,23,0.6); backdrop-filter: blur(6px);
+    }
+    header{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px}
+    .logo{
+      display:flex; gap:12px; align-items:center;
+    }
+    .logo svg{width:44px; height:44px; flex-shrink:0}
+    h1{font-size:20px; margin:0; letter-spacing:-0.2px}
+    p.lead{margin:6px 0 0; color:var(--muted); font-size:13px}
+    .badges{display:flex; gap:10px; align-items:center;}
+    .badge{
+      display:inline-flex; align-items:center; gap:8px; padding:8px 12px;
+      background:var(--glass); border-radius:999px; font-size:13px; color:var(--muted);
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    main{display:grid; grid-template-columns: 1fr 360px; gap:18px; margin-top:14px}
+    @media (max-width:920px){ main{grid-template-columns:1fr} }
+    .hero{
+      padding:18px; background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+      border-radius:12px; min-height:220px; display:flex; flex-direction:column; justify-content:center;
+    }
+    .hero h2{margin:0 0 8px; font-size:18px}
+    .hero p{margin:0; color:var(--muted); font-size:14px}
+    .actions{margin-top:14px; display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      display:inline-grid; place-items:center; padding:10px 14px; border-radius:10px; cursor:pointer;
+      border:0; font-weight:600; font-size:14px;
+    }
+    .btn.primary{background:linear-gradient(90deg,#06b6d4,#7ee7c7); color:#042028}
+    .btn.ghost{background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted)}
+    .meta{
+      margin-top:14px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;
+      color:var(--muted); font-size:13px;
+    }
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+      border-radius:12px; padding:14px; border:1px solid rgba(255,255,255,0.03);
+    }
+    .side{
+      display:flex; flex-direction:column; gap:12px;
+    }
+    .status {
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+    }
+    .pill{padding:8px 12px; border-radius:999px; font-weight:700; font-size:13px}
+    .pill.good{background:rgba(94,234,212,0.12); color:var(--accent)}
+    .pill.warn{background:rgba(255,183,77,0.08); color:#ffd39f}
+    .log{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; font-size:13px;
+      max-height:260px; overflow:auto; padding:12px; border-radius:8px; background:rgba(0,0,0,0.15); color:#dff6f0;
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    pre{margin:0; white-space:pre-wrap}
+    .kbd{background:rgba(255,255,255,0.02); padding:6px 8px; border-radius:6px; color:var(--muted); font-size:13px}
+    footer{margin-top:18px; color:var(--muted); font-size:13px; text-align:center}
+    a.inline{color:inherit; text-decoration:underline; text-underline-offset:3px}
+    .small{font-size:13px; color:var(--muted)}
+  </style>
 </head>
 <body>
-    <h1>Welcome to My Web Page</h1>
-    <p>This is a very simple HTML page example.</p>
-    <button onclick="alert('Hello!')">Click Me</button>
+  <div class="wrap">
+    <div class="card" role="main" aria-labelledby="title">
+      <header>
+        <div class="logo" id="title">
+          <!-- small inline icon -->
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="21" height="21" rx="6" stroke="currentColor" stroke-opacity="0.08" />
+            <path d="M6 12h12M8 8h8M8 16h8" stroke="currentColor" stroke-opacity="0.6" stroke-linecap="round" stroke-width="1.2"/>
+          </svg>
+          <div>
+            <h1>CI/CD Demo — GitHub → Jenkins → Remote</h1>
+            <p class="lead">Push to GitHub, Jenkins builds, and Jenkins deploys to the remote server automatically.</p>
+          </div>
+        </div>
+
+        <div class="badges" aria-hidden="true">
+          <!-- Replace src with your real badge URLs (shields.io, Jenkins, etc.) -->
+          <span class="badge"><img alt="" src="https://img.shields.io/badge/GitHub-Repo-181717?style=flat-square&logo=github" height="18"> Repo</span>
+          <span class="badge"><img alt="" src="https://img.shields.io/badge/Jenkins-Build-orange?style=flat-square&logo=jenkins" height="18"> Build</span>
+          <span class="badge"><img alt="" src="https://img.shields.io/badge/Deploy-Remote-blue?style=flat-square" height="18"> Deployed</span>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero panel" aria-labelledby="hero-heading">
+          <h2 id="hero-heading">Modern demo page for an automated pipeline</h2>
+          <p>
+            This repository demonstrates a simple pipeline: code is hosted on GitHub → Jenkins watches the repo and builds →
+            on success Jenkins copies the site to the remote server (e.g. <code>/var/www/html/index.html</code>) and restarts Apache.
+          </p>
+
+          <div class="actions" role="group" aria-label="Quick actions">
+            <button class="btn primary" onclick="openRepo()">View Repo</button>
+            <button class="btn ghost" onclick="openJenkins()">Open Jenkins</button>
+            <span class="kbd">git push → automatic build</span>
+          </div>
+
+          <div class="meta">
+            <div class="small">Latest build:</div>
+            <div id="latest-build" class="small">— checking…</div>
+          </div>
+        </section>
+
+        <aside class="side">
+          <div class="panel">
+            <div class="status" aria-live="polite">
+              <div>
+                <div class="small">Deployment status</div>
+                <div id="deploy-pill" class="pill warn" aria-atomic="true">Unknown</div>
+              </div>
+              <div class="small" style="text-align:right">
+                <div>Server</div>
+                <div id="server-time" class="small">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="small" style="margin-bottom:8px">How it works (example Jenkins steps)</div>
+            <pre class="small">
+1. Pull latest code from GitHub (webhook triggers)
+2. Run tests/build steps
+3. If OK: scp index.html to remote:/var/www/html/index.html
+4. SSH to remote and restart apache2:
+   sudo systemctl restart apache2
+            </pre>
+          </div>
+
+          <div class="panel">
+            <div class="small" style="margin-bottom:8px">Quick commands</div>
+            <pre class="log small">
+# From Jenkins or CI agent:
+scp /path/to/index.html ubuntu@your-server:/var/www/html/index.html
+ssh ubuntu@your-server sudo systemctl restart apache2
+
+# Local test:
+python3 -m http.server 8000
+            </pre>
+          </div>
+        </aside>
+
+        <!-- full-width area for logs (moved below on small screens) -->
+        <div style="grid-column: 1 / -1; margin-top:14px;">
+          <div class="panel">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;">
+              <div class="small">Deployment log</div>
+              <div class="small">Last checked: <span id="checked-at">—</span></div>
+            </div>
+            <div id="log" class="log" role="log" aria-live="polite">
+              <pre id="log-pre">No deployments tracked yet. Push to GitHub to trigger Jenkins build.</pre>
+            </div>
+          </div>
+        </div>
+
+      </main>
+
+      <footer>
+        <div class="small">Make badges point to your real Jenkins / GitHub status images for a live indicator.</div>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // Small helpers for demo behaviour. Optional: the server can provide /deploy-status.json
+    // Example JSON format:
+    // { "status": "success", "build": " #42", "time": "2025-11-23T09:12:34Z", "notes":"Deployed by Jenkins job: website-deploy" }
+
+    const logPre = document.getElementById('log-pre');
+    const deployPill = document.getElementById('deploy-pill');
+    const latestBuild = document.getElementById('latest-build');
+    const checkedAt = document.getElementById('checked-at');
+    const serverTime = document.getElementById('server-time');
+
+    function setStatus(data) {
+      const s = (data && data.status) || 'unknown';
+      const build = (data && data.build) || '—';
+      const time = data && data.time ? new Date(data.time) : null;
+
+      latestBuild.textContent = build + (data && data.notes ? ' — ' + data.notes : '');
+      logPre.textContent = data && data.log ? data.log : (data && data.notes ? data.notes : 'No detailed logs available.');
+
+      if (s === 'success') {
+        deployPill.className = 'pill good';
+        deployPill.textContent = 'Healthy';
+      } else if (s === 'building' || s === 'queued') {
+        deployPill.className = 'pill warn';
+        deployPill.textContent = 'Building';
+      } else if (s === 'failure') {
+        deployPill.className = 'pill warn';
+        deployPill.textContent = 'Failed';
+      } else {
+        deployPill.className = 'pill warn';
+        deployPill.textContent = 'Unknown';
+      }
+
+      checkedAt.textContent = new Date().toLocaleString();
+      serverTime.textContent = time ? time.toLocaleString() : '—';
+    }
+
+    // Try to fetch a small JSON deployed on the webserver at /deploy-status.json
+    // Optional: create this file with your CI pipeline to expose last build info.
+    (function tryFetchStatus(){
+      fetch('/deploy-status.json', {cache: 'no-store'})
+        .then(r => {
+          if (!r.ok) throw new Error('no status file');
+          return r.json();
+        })
+        .then(data => setStatus(data))
+        .catch(()=> {
+          // If the file is not present, show a helpful static message
+          setStatus({
+            status:'unknown',
+            build:'(local demo)',
+            time: new Date().toISOString(),
+            notes:'Create /deploy-status.json on the server (optional) to show live info. Example: {"status":"success","build":"#42","time":"2025-11-23T09:12:34Z","notes":"Deployed by Jenkins"}'
+          });
+        });
+    })();
+
+    // convenience buttons (replace URLs)
+    function openRepo(){
+      window.open('https://github.com/your-org/your-repo','_blank');
+    }
+    function openJenkins(){
+      window.open('https://jenkins.your-company.local/job/website-deploy/','_blank');
+    }
+  </script>
 </body>
 </html>
